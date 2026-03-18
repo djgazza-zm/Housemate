@@ -72,6 +72,26 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 └── package.json
 ```
 
+## Deployment
+
+### Render
+1. Connect your GitHub repo on [render.com](https://render.com)
+2. It will auto-detect `render.yaml` and configure everything
+3. A persistent disk is configured for the SQLite database
+
+### Railway
+1. Connect your GitHub repo on [railway.app](https://railway.app)
+2. It will auto-detect `railway.toml` and deploy
+
+### Docker
+```bash
+docker build -t housemate-zm .
+docker run -p 3000:3000 housemate-zm
+```
+
+### Heroku
+Uses the included `Procfile`. Push to Heroku and it will start automatically.
+
 ## No External Dependencies
 
 Everything runs internally. No API keys, external services, or environment variables needed. Clone, install, run.
