@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Housemate Zm - Find Your Perfect Place</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="glass-header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <span class="logo-icon">&#9978;</span>
+        <span class="logo-text">Housemate<span class="logo-zm">Zm</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/search">Find a Place</a>
+        <% if (user) { %>
+          <a href="/post">Post a Place</a>
+          <% if (user.is_admin) { %>
+            <a href="/admin">Admin</a>
+          <% } else { %>
+            <a href="/dashboard">My Dashboard</a>
+          <% } %>
+          <a href="/logout" class="btn-logout">Log Out</a>
+        <% } else { %>
+          <a href="/login" class="btn-login">Log In</a>
+          <a href="/signup" class="btn-signup">Sign Up</a>
+        <% } %>
+      </nav>
+      <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+    </div>
+  </header>
+
+  <% if (success) { %>
+    <div class="flash flash-success" onclick="this.remove()"><%= success %></div>
+  <% } %>
+  <% if (error) { %>
+    <div class="flash flash-error" onclick="this.remove()"><%= error %></div>
+  <% } %>
+
+  <main class="main-content">

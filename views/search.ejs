@@ -1,0 +1,68 @@
+<%- include('partials/header') %>
+
+<section class="section">
+  <h2 class="section-title">Find a Place</h2>
+
+  <div class="search-filters glass-card">
+    <form action="/search" method="GET" class="filter-form">
+      <div class="filter-row">
+        <div class="form-group">
+          <label>Search</label>
+          <input type="text" name="q" value="<%= query.q || '' %>" placeholder="Name or location...">
+        </div>
+        <div class="form-group">
+          <label>Type of Place</label>
+          <select name="category">
+            <option value="all">All Types</option>
+            <% categories.forEach(c => { %>
+              <option value="<%= c.category %>" <%= query.category === c.category ? 'selected' : '' %>><%= c.category %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Min Rent (K)</label>
+          <input type="number" name="min_rent" value="<%= query.min_rent || '' %>" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Max Rent (K)</label>
+          <input type="number" name="max_rent" value="<%= query.max_rent || '' %>" placeholder="Any">
+        </div>
+        <div class="form-group">
+          <label>Things it Has</label>
+          <input type="text" name="amenities" value="<%= query.amenities || '' %>" placeholder="WiFi, Parking...">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/search" class="btn btn-outline">Clear</a>
+    </form>
+  </div>
+
+  <% if (results.length === 0) { %>
+    <div class="empty-state glass-card">
+      <p>No places found. Try different search terms.</p>
+    </div>
+  <% } else { %>
+    <p class="results-count"><%= results.length %> place<%= results.length !== 1 ? 's' : '' %> found</p>
+    <div class="listings-grid">
+      <% results.forEach(listing => { %>
+        <div class="listing-card glass-card">
+          <div class="card-img-wrap">
+            <% const imgs = JSON.parse(listing.images || '[]'); %>
+            <img src="/uploads/<%= imgs[0] || 'demo-1.jpg' %>" alt="<%= listing.name %>" loading="lazy">
+            <span class="card-category"><%= listing.category %></span>
+            <% if (listing.featured) { %><span class="card-badge">Featured</span><% } %>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title"><%= listing.name %></h3>
+            <p class="card-location">&#128205; <%= listing.location %></p>
+            <p class="card-rent">K<%= listing.rent.toLocaleString() %>/month</p>
+            <p class="card-owner">By <%= listing.owner_name %></p>
+            <a href="/listing/<%= listing.id %>" class="btn btn-sm btn-outline">View Details</a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

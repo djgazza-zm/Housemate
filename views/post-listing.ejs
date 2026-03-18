@@ -1,0 +1,71 @@
+<%- include('partials/header') %>
+
+<section class="section">
+  <div class="form-page glass-card">
+    <h2>Post a Place</h2>
+    <p class="form-subtitle">Fill in the details about your place. Fields marked * are required.</p>
+
+    <form action="/post" method="POST" enctype="multipart/form-data">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Name of Place *</label>
+          <input type="text" id="name" name="name" placeholder="e.g. Sunny 2-Bedroom Apartment" required>
+        </div>
+        <div class="form-group">
+          <label for="category">Type of Place *</label>
+          <select id="category" name="category" required>
+            <option value="">Pick a type...</option>
+            <option value="Apartment">Apartment</option>
+            <option value="House">House</option>
+            <option value="Room">Room</option>
+            <option value="Condo">Condo</option>
+            <option value="Office">Office</option>
+            <option value="Farm">Farm</option>
+            <option value="Event Center">Event Center</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="rent">Rent per Month (K) *</label>
+          <input type="number" id="rent" name="rent" placeholder="e.g. 5000" required min="0">
+        </div>
+        <div class="form-group">
+          <label for="location">Location *</label>
+          <input type="text" id="location" name="location" placeholder="e.g. Lusaka, Kabulonga" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="room_type">Room Type</label>
+          <input type="text" id="room_type" name="room_type" placeholder="e.g. 2 Bedroom, Studio, Open Plan">
+        </div>
+        <div class="form-group">
+          <label for="amenities">Things the Place Has</label>
+          <input type="text" id="amenities" name="amenities" placeholder="WiFi, Parking, Pool (comma separated)">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Tell People About This Place *</label>
+        <textarea id="description" name="description" rows="5" placeholder="Describe the place, what makes it special, nearby areas..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="images">Photos (up to 10)</label>
+        <input type="file" id="images" name="images" accept="image/*" multiple>
+        <small>Pick photos from your device. Max 10MB each.</small>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Post This Place</button>
+        <a href="/dashboard" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

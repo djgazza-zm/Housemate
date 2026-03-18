@@ -1,0 +1,84 @@
+<%- include('partials/header') %>
+
+<section class="section">
+  <div class="form-page glass-card">
+    <h2>Edit Place</h2>
+
+    <form action="/edit/<%= listing.id %>" method="POST" enctype="multipart/form-data">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Name of Place *</label>
+          <input type="text" id="name" name="name" value="<%= listing.name %>" required>
+        </div>
+        <div class="form-group">
+          <label for="category">Type of Place *</label>
+          <select id="category" name="category" required>
+            <option value="Apartment" <%= listing.category === 'Apartment' ? 'selected' : '' %>>Apartment</option>
+            <option value="House" <%= listing.category === 'House' ? 'selected' : '' %>>House</option>
+            <option value="Room" <%= listing.category === 'Room' ? 'selected' : '' %>>Room</option>
+            <option value="Condo" <%= listing.category === 'Condo' ? 'selected' : '' %>>Condo</option>
+            <option value="Office" <%= listing.category === 'Office' ? 'selected' : '' %>>Office</option>
+            <option value="Farm" <%= listing.category === 'Farm' ? 'selected' : '' %>>Farm</option>
+            <option value="Event Center" <%= listing.category === 'Event Center' ? 'selected' : '' %>>Event Center</option>
+            <option value="Other" <%= listing.category === 'Other' ? 'selected' : '' %>>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="rent">Rent per Month (K) *</label>
+          <input type="number" id="rent" name="rent" value="<%= listing.rent %>" required min="0">
+        </div>
+        <div class="form-group">
+          <label for="location">Location *</label>
+          <input type="text" id="location" name="location" value="<%= listing.location %>" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="room_type">Room Type</label>
+          <input type="text" id="room_type" name="room_type" value="<%= listing.room_type %>">
+        </div>
+        <div class="form-group">
+          <label for="amenities">Things the Place Has</label>
+          <input type="text" id="amenities" name="amenities" value="<%= listing.amenities %>">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Tell People About This Place *</label>
+        <textarea id="description" name="description" rows="5" required><%= listing.description %></textarea>
+      </div>
+
+      <!-- Existing Images -->
+      <% const existingImages = JSON.parse(listing.images || '[]'); %>
+      <% if (existingImages.length > 0) { %>
+        <div class="form-group">
+          <label>Current Photos (uncheck to remove)</label>
+          <div class="existing-images">
+            <% existingImages.forEach(img => { %>
+              <label class="image-checkbox">
+                <input type="checkbox" name="keep_images" value="<%= img %>" checked>
+                <img src="/uploads/<%= img %>" alt="Current photo">
+              </label>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+
+      <div class="form-group">
+        <label for="images">Add More Photos</label>
+        <input type="file" id="images" name="images" accept="image/*" multiple>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="/dashboard" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

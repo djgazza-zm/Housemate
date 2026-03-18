@@ -1,0 +1,98 @@
+<%- include('partials/header') %>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <h1>Find Your Perfect Place</h1>
+    <p>Apartments, houses, offices, farms, and more across Zambia</p>
+    <form action="/search" method="GET" class="hero-search">
+      <input type="text" name="q" placeholder="Search by name or location..." class="hero-input">
+      <select name="category" class="hero-select">
+        <option value="all">All Types</option>
+        <% categories.forEach(c => { %>
+          <option value="<%= c.category %>"><%= c.category %> (<%= c.count %>)</option>
+        <% }) %>
+      </select>
+      <button type="submit" class="btn btn-primary">Find a Place</button>
+    </form>
+  </div>
+</section>
+
+<!-- Featured Slider -->
+<% if (featured.length > 0) { %>
+<section class="section">
+  <h2 class="section-title">Featured Places</h2>
+  <div class="slider-container">
+    <button class="slider-btn slider-prev" onclick="slideLeft()">&lsaquo;</button>
+    <div class="slider-track" id="featuredSlider">
+      <% featured.forEach(listing => { %>
+        <div class="slider-card glass-card">
+          <div class="card-img-wrap">
+            <% const imgs = JSON.parse(listing.images || '[]'); %>
+            <img src="/uploads/<%= imgs[0] || 'demo-1.jpg' %>" alt="<%= listing.name %>" loading="lazy">
+            <span class="card-badge">Featured</span>
+            <span class="card-category"><%= listing.category %></span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title"><%= listing.name %></h3>
+            <p class="card-location">&#128205; <%= listing.location %></p>
+            <p class="card-rent">K<%= listing.rent.toLocaleString() %>/month</p>
+            <div class="card-actions">
+              <a href="/listing/<%= listing.id %>" class="btn btn-sm btn-primary">View Details</a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+    <button class="slider-btn slider-next" onclick="slideRight()">&rsaquo;</button>
+  </div>
+</section>
+<% } %>
+
+<!-- Category Quick Links -->
+<section class="section">
+  <h2 class="section-title">Browse by Type</h2>
+  <div class="category-grid">
+    <% categories.forEach(c => { %>
+      <a href="/search?category=<%= encodeURIComponent(c.category) %>" class="category-card glass-card">
+        <span class="category-icon">
+          <% if (c.category === 'Apartment') { %>&#127970;<% } %>
+          <% if (c.category === 'House') { %>&#127968;<% } %>
+          <% if (c.category === 'Room') { %>&#128719;<% } %>
+          <% if (c.category === 'Office') { %>&#127970;<% } %>
+          <% if (c.category === 'Farm') { %>&#127806;<% } %>
+          <% if (c.category === 'Event Center') { %>&#127878;<% } %>
+          <% if (c.category === 'Condo') { %>&#127961;<% } %>
+        </span>
+        <span class="category-name"><%= c.category %></span>
+        <span class="category-count"><%= c.count %> places</span>
+      </a>
+    <% }) %>
+  </div>
+</section>
+
+<!-- Recent Listings Grid -->
+<section class="section">
+  <h2 class="section-title">Recent Places</h2>
+  <div class="listings-grid">
+    <% recent.forEach(listing => { %>
+      <div class="listing-card glass-card">
+        <div class="card-img-wrap">
+          <% const imgs2 = JSON.parse(listing.images || '[]'); %>
+          <img src="/uploads/<%= imgs2[0] || 'demo-1.jpg' %>" alt="<%= listing.name %>" loading="lazy">
+          <span class="card-category"><%= listing.category %></span>
+          <% if (listing.featured) { %><span class="card-badge">Featured</span><% } %>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title"><%= listing.name %></h3>
+          <p class="card-location">&#128205; <%= listing.location %></p>
+          <p class="card-rent">K<%= listing.rent.toLocaleString() %>/month</p>
+          <p class="card-owner">By <%= listing.owner_name %></p>
+          <a href="/listing/<%= listing.id %>" class="btn btn-sm btn-outline">View Details</a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
