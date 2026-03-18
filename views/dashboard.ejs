@@ -1,0 +1,143 @@
+<%- include('partials/header') %>
+
+<section class="section dashboard">
+  <div class="dashboard-header">
+    <h2>My Dashboard</h2>
+    <a href="/post" class="btn btn-primary">+ Post a Place</a>
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- Profile Card -->
+    <div class="glass-card dashboard-profile">
+      <h3>My Profile</h3>
+      <div class="profile-info">
+        <img src="/uploads/<%= user.profile_photo %>" alt="<%= user.username %>" class="profile-avatar">
+        <div>
+          <p class="profile-name"><%= user.username %></p>
+          <p class="profile-email"><%= user.email %></p>
+        </div>
+      </div>
+      <form action="/profile/update" method="POST" enctype="multipart/form-data" class="profile-form">
+        <div class="form-group">
+          <label>Change Name</label>
+          <input type="text" name="username" value="<%= user.username %>" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label>Change Photo</label>
+          <input type="file" name="profile_photo" accept="image/*">
+        </div>
+        <button type="submit" class="btn btn-sm btn-outline">Update Profile</button>
+      </form>
+    </div>
+
+    <!-- Stats -->
+    <div class="glass-card dashboard-stats">
+      <h3>Quick Stats</h3>
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-number"><%= listings.length %></span>
+          <span class="stat-label">My Places</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number"><%= messages.length %></span>
+          <span class="stat-label">Messages Received</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number"><%= sentMessages.length %></span>
+          <span class="stat-label">Messages Sent</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Listings -->
+  <div class="glass-card dashboard-section">
+    <h3>My Places</h3>
+    <% if (listings.length === 0) { %>
+      <div class="empty-state">
+        <p>You have not posted any places yet. <a href="/post">Post your first place!</a></p>
+      </div>
+    <% } else { %>
+      <div class="dashboard-listings">
+        <% listings.forEach(listing => { %>
+          <div class="dash-listing-card">
+            <div class="dash-listing-img">
+              <% const imgs = JSON.parse(listing.images || '[]'); %>
+              <img src="/uploads/<%= imgs[0] || 'demo-1.jpg' %>" alt="<%= listing.name %>">
+            </div>
+            <div class="dash-listing-info">
+              <h4><a href="/listing/<%= listing.id %>"><%= listing.name %></a></h4>
+              <p>K<%= listing.rent.toLocaleString() %>/month &middot; <%= listing.location %></p>
+              <p class="listing-status status-<%= listing.status %>"><%= listing.status %></p>
+            </div>
+            <div class="dash-listing-actions">
+              <a href="/edit/<%= listing.id %>" class="btn btn-sm btn-outline">Edit</a>
+              <form action="/delete/<%= listing.id %>" method="POST" style="display:inline" onsubmit="return confirm('Are you sure you want to remove this place?')">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Messages Received -->
+  <div class="glass-card dashboard-section">
+    <h3>Messages Received</h3>
+    <% if (messages.length === 0) { %>
+      <div class="empty-state">
+        <p>No messages yet.</p>
+      </div>
+    <% } else { %>
+      <div class="messages-list">
+        <% messages.forEach(msg => { %>
+          <div class="message-card <%= msg.read ? '' : 'unread' %>">
+            <div class="message-header">
+              <strong><%= msg.sender_name %></strong>
+              <% if (msg.listing_name) { %>
+                <span class="message-listing">about: <%= msg.listing_name %></span>
+              <% } %>
+              <span class="message-time"><%= new Date(msg.created_at).toLocaleDateString() %></span>
+            </div>
+            <p class="message-body"><%= msg.message %></p>
+            <div class="message-actions">
+              <% if (!msg.read) { %>
+                <form action="/message/read/<%= msg.id %>" method="POST" style="display:inline">
+                  <button type="submit" class="btn btn-sm btn-outline">Mark as Read</button>
+                </form>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Messages Sent -->
+  <div class="glass-card dashboard-section">
+    <h3>Messages Sent</h3>
+    <% if (sentMessages.length === 0) { %>
+      <div class="empty-state">
+        <p>You have not sent any messages yet.</p>
+      </div>
+    <% } else { %>
+      <div class="messages-list">
+        <% sentMessages.forEach(msg => { %>
+          <div class="message-card sent">
+            <div class="message-header">
+              <strong>To: <%= msg.receiver_name %></strong>
+              <% if (msg.listing_name) { %>
+                <span class="message-listing">about: <%= msg.listing_name %></span>
+              <% } %>
+              <span class="message-time"><%= new Date(msg.created_at).toLocaleDateString() %></span>
+            </div>
+            <p class="message-body"><%= msg.message %></p>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,168 @@
+<%- include('partials/header') %>
+
+<section class="section admin-dashboard">
+  <h2 class="section-title">Admin Dashboard</h2>
+
+  <!-- Stats Overview -->
+  <div class="admin-stats-grid">
+    <div class="glass-card stat-card">
+      <span class="stat-number"><%= stats.totalUsers %></span>
+      <span class="stat-label">Total Users</span>
+    </div>
+    <div class="glass-card stat-card">
+      <span class="stat-number"><%= stats.totalListings %></span>
+      <span class="stat-label">Total Places</span>
+    </div>
+    <div class="glass-card stat-card">
+      <span class="stat-number"><%= stats.totalMessages %></span>
+      <span class="stat-label">Total Messages</span>
+    </div>
+    <div class="glass-card stat-card">
+      <span class="stat-number"><%= stats.featuredListings %></span>
+      <span class="stat-label">Featured</span>
+    </div>
+  </div>
+
+  <!-- Category Breakdown -->
+  <div class="glass-card admin-section">
+    <h3>Places by Type</h3>
+    <div class="category-bars">
+      <% stats.categoryCounts.forEach(c => { %>
+        <div class="category-bar-item">
+          <span class="cat-name"><%= c.category %></span>
+          <div class="cat-bar">
+            <div class="cat-bar-fill" style="width: <%= Math.min(100, (c.count / stats.totalListings) * 100) %>%"></div>
+          </div>
+          <span class="cat-count"><%= c.count %></span>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Admin Tabs -->
+  <div class="admin-tabs">
+    <button class="tab-btn active" onclick="showTab('listings-tab', this)">All Places</button>
+    <button class="tab-btn" onclick="showTab('users-tab', this)">Users</button>
+    <button class="tab-btn" onclick="showTab('messages-tab', this)">Messages</button>
+  </div>
+
+  <!-- Listings Tab -->
+  <div id="listings-tab" class="tab-content active glass-card admin-section">
+    <h3>All Places (<%= listings.length %>)</h3>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Owner</th>
+            <th>Category</th>
+            <th>Rent</th>
+            <th>Status</th>
+            <th>Featured</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% listings.forEach(l => { %>
+            <tr>
+              <td><%= l.id %></td>
+              <td><a href="/listing/<%= l.id %>"><%= l.name %></a></td>
+              <td><%= l.owner_name %></td>
+              <td><%= l.category %></td>
+              <td>K<%= l.rent.toLocaleString() %></td>
+              <td><span class="status-badge status-<%= l.status %>"><%= l.status %></span></td>
+              <td><%= l.featured ? 'Yes' : 'No' %></td>
+              <td class="action-cell">
+                <form action="/admin/listing/<%= l.id %>/feature" method="POST" style="display:inline">
+                  <button type="submit" class="btn btn-xs btn-outline"><%= l.featured ? 'Unfeature' : 'Feature' %></button>
+                </form>
+                <% if (l.status !== 'approved') { %>
+                  <form action="/admin/listing/<%= l.id %>/approve" method="POST" style="display:inline">
+                    <button type="submit" class="btn btn-xs btn-primary">Approve</button>
+                  </form>
+                <% } %>
+                <% if (l.status !== 'rejected') { %>
+                  <form action="/admin/listing/<%= l.id %>/reject" method="POST" style="display:inline">
+                    <button type="submit" class="btn btn-xs btn-outline">Reject</button>
+                  </form>
+                <% } %>
+                <form action="/admin/listing/<%= l.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('Delete this place?')">
+                  <button type="submit" class="btn btn-xs btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Users Tab -->
+  <div id="users-tab" class="tab-content glass-card admin-section" style="display:none">
+    <h3>All Users (<%= users.length %>)</h3>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(u => { %>
+            <tr>
+              <td><%= u.id %></td>
+              <td><%= u.username %></td>
+              <td><%= u.email %></td>
+              <td><span class="status-badge <%= u.is_admin ? 'status-featured' : 'status-approved' %>"><%= u.is_admin ? 'Admin' : 'User' %></span></td>
+              <td><%= new Date(u.created_at).toLocaleDateString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Messages Tab -->
+  <div id="messages-tab" class="tab-content glass-card admin-section" style="display:none">
+    <h3>All Messages (<%= messages.length %>)</h3>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>From</th>
+            <th>To</th>
+            <th>About</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% messages.forEach(m => { %>
+            <tr>
+              <td><%= m.id %></td>
+              <td><%= m.sender_name %></td>
+              <td><%= m.receiver_name %></td>
+              <td><%= m.listing_name || '-' %></td>
+              <td class="msg-preview"><%= m.message.substring(0, 60) %><%= m.message.length > 60 ? '...' : '' %></td>
+              <td><%= new Date(m.created_at).toLocaleDateString() %></td>
+              <td>
+                <form action="/admin/message/<%= m.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('Delete this message?')">
+                  <button type="submit" class="btn btn-xs btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,87 @@
+<%- include('partials/header') %>
+
+<section class="section listing-detail">
+  <div class="listing-detail-grid">
+    <!-- Images -->
+    <div class="listing-images glass-card">
+      <% const images = JSON.parse(listing.images || '[]'); %>
+      <% if (images.length > 0) { %>
+        <div class="main-image">
+          <img src="/uploads/<%= images[0] %>" alt="<%= listing.name %>" id="mainImage">
+        </div>
+        <% if (images.length > 1) { %>
+          <div class="image-thumbs">
+            <% images.forEach((img, i) => { %>
+              <img src="/uploads/<%= img %>" alt="Photo <%= i + 1 %>" 
+                   class="thumb <%= i === 0 ? 'active' : '' %>"
+                   onclick="document.getElementById('mainImage').src=this.src; document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active')); this.classList.add('active');">
+            <% }) %>
+          </div>
+        <% } %>
+      <% } else { %>
+        <div class="main-image">
+          <img src="/uploads/demo-1.jpg" alt="<%= listing.name %>">
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Info -->
+    <div class="listing-info glass-card">
+      <div class="listing-header-info">
+        <span class="card-category"><%= listing.category %></span>
+        <% if (listing.featured) { %><span class="card-badge">Featured</span><% } %>
+      </div>
+      <h1><%= listing.name %></h1>
+      <p class="listing-location">&#128205; <%= listing.location %></p>
+      <p class="listing-rent">K<%= listing.rent.toLocaleString() %><span>/month</span></p>
+
+      <% if (listing.room_type) { %>
+        <p class="listing-meta"><strong>Type:</strong> <%= listing.room_type %></p>
+      <% } %>
+
+      <% if (listing.amenities) { %>
+        <div class="amenities-list">
+          <h3>Things This Place Has</h3>
+          <div class="amenity-tags">
+            <% listing.amenities.split(',').forEach(a => { %>
+              <span class="amenity-tag"><%= a.trim() %></span>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+
+      <div class="listing-description">
+        <h3>About This Place</h3>
+        <p><%= listing.description %></p>
+      </div>
+
+      <div class="listing-owner">
+        <img src="/uploads/<%= listing.owner_photo %>" alt="<%= listing.owner_name %>" class="owner-avatar">
+        <div>
+          <p class="owner-name">Posted by <strong><%= listing.owner_name %></strong></p>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <% if (user && user.id !== listing.user_id) { %>
+        <div class="contact-form">
+          <h3>Contact the Owner</h3>
+          <form action="/message/send" method="POST">
+            <input type="hidden" name="receiver_id" value="<%= listing.user_id %>">
+            <input type="hidden" name="listing_id" value="<%= listing.id %>">
+            <div class="form-group">
+              <textarea name="message" rows="3" placeholder="Hi, I am interested in this place..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Send Message</button>
+          </form>
+        </div>
+      <% } else if (!user) { %>
+        <div class="contact-form">
+          <p><a href="/login">Log in</a> to contact the owner</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
